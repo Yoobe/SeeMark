@@ -28,6 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const onDidChangeTextDocument = vscode.workspace.onDidChangeTextDocument((event) => {
         if (isMarkdownFile(event.document)) {
+            // Check for Enter key after ordered list item
+            handleOrderedListAutoIncrement(event);
             updateEditorForDocument(event.document);
         }
     });
@@ -90,6 +92,22 @@ function initializeDecorationTypes() {
 
     decorationTypes.set('strikethrough', vscode.window.createTextEditorDecorationType({
         textDecoration: 'line-through'
+    }));
+
+    decorationTypes.set('bulletList', vscode.window.createTextEditorDecorationType({
+        before: {
+            contentText: '• ',
+            color: new vscode.ThemeColor('editor.foreground'),
+            fontWeight: 'bold',
+            margin: '0 0 0 16px'
+        },
+        textDecoration: 'none; margin-left: 16px;'
+    }));
+
+    decorationTypes.set('orderedList', vscode.window.createTextEditorDecorationType({
+        color: new vscode.ThemeColor('editor.foreground'),
+        fontWeight: '500',
+        textDecoration: 'none; margin-left: 10px; padding-left: 2px'
     }));
 }
 
@@ -160,6 +178,23 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
         return;
     }
 
+    // Handle bullet lists (- item)
+    if (text.match(/^(\s*)- /)) {
+        const match = text.match(/^(\s*)- (.*)$/);
+        if (match) {
+            const indent = match[1];
+            // Hide the "- " and replace with bullet
+            addDecoration(decorationsMap, 'bulletList', lineNumber, indent.length, indent.length + 2);
+        }
+        return;
+    }
+
+    // Handle ordered lists (1. item, 2. item, etc.)
+    if (text.match(/^(\s*)\d+\.\s/)) {
+        addDecoration(decorationsMap, 'orderedList', lineNumber, 0, text.length);
+        return;
+    }
+
     const boldRegex = /\*\*(.*?)\*\*/g;
     let match;
     while ((match = boldRegex.exec(text)) !== null) {
@@ -194,6 +229,35 @@ function addDecoration(decorationsMap: Map<string, vscode.DecorationOptions[]>, 
 function clearAllDecorations(editor: vscode.TextEditor) {
     for (const [, decorationType] of decorationTypes) {
         editor.setDecorations(decorationType, []);
+    }
+}
+
+function handleOrderedListAutoIncrement(event: vscode.TextDocumentChangeEvent) {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor || editor.document !== event.document) return;
+
+    // Check if this was a newline insertion
+    for (const change of event.contentChanges) {
+        if (change.text === '\n' || change.text === '\r\n') {
+            const position = change.range.start;
+            const currentLine = editor.document.lineAt(position.line);
+            const currentText = currentLine.text;
+
+            // Check if current line is an ordered list item
+            const orderedListMatch = currentText.match(/^(\s*)(\d+)\.\s/);
+            if (orderedListMatch) {
+                const indent = orderedListMatch[1];
+                const currentNumber = parseInt(orderedListMatch[2]);
+                const nextNumber = currentNumber + 1;
+                const nextListItem = `${indent}${nextNumber}. `;
+
+                // Insert the next number on the new line
+                const nextLinePosition = new vscode.Position(position.line + 1, 0);
+                const edit = new vscode.WorkspaceEdit();
+                edit.insert(event.document.uri, nextLinePosition, nextListItem);
+                vscode.workspace.applyEdit(edit);
+            }
+        }
     }
 }
 
