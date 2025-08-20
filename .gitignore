@@ -135,5 +135,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-// compiled exention
-**.vsix
+# compiled extension
+*.vsix
