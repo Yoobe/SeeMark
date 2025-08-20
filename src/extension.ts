@@ -137,6 +137,16 @@ function initializeDecorationTypes() {
         color: 'rgba(127,127,127,0.2)'
     }));
 
+    decorationTypes.set('linkSymbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0.3',
+        color: 'rgba(127,127,127,0.3)'
+    }));
+
+    decorationTypes.set('linkContent', vscode.window.createTextEditorDecorationType({
+        color: new vscode.ThemeColor('textLink.foreground'),
+        textDecoration: 'underline'
+    }));
+
     decorationTypes.set('bulletList', vscode.window.createTextEditorDecorationType({
         before: {
             contentText: '•',
@@ -298,6 +308,23 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
         }
         // Always style the content
         addDecoration(decorationsMap, 'strikethroughContent', lineNumber, match.index + 2, match.index + 2 + match[1].length);
+    }
+
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    while ((match = linkRegex.exec(text)) !== null) {
+        const linkText = match[1];
+        const linkUrl = match[2];
+        
+        // Only hide symbols when not focused
+        if (!isFocused) {
+            // Hide the [ ] ( ) symbols
+            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index, match.index + 1); // [
+            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + 1 + linkText.length, match.index + 1 + linkText.length + 1); // ]
+            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + 1 + linkText.length + 1, match.index + 1 + linkText.length + 2); // (
+            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + match[0].length - 1, match.index + match[0].length); // )
+        }
+        // Always style the link text
+        addDecoration(decorationsMap, 'linkContent', lineNumber, match.index + 1, match.index + 1 + linkText.length);
     }
 }
 
