@@ -1,0 +1,66 @@
+{
+  "name": "focused-markdown",
+  "displayName": "Focused Markdown",
+  "description": "A custom editor that renders non-focused lines as Markdown and turns the focused line into editable text.",
+  "version": "0.0.6",
+  "publisher": "your-name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonahgoldsaito/MarkGetsDown.git"
+  },
+  "homepage": "https://github.com/jonahgoldsaito/MarkGetsDown",
+  "bugs": {
+    "url": "https://github.com/jonahgoldsaito/MarkGetsDown/issues"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "focusedMarkdown.toggle",
+        "title": "Toggle Focused Markdown"
+      },
+      {
+        "command": "focusedMarkdown.enable",
+        "title": "Enable Focused Markdown"
+      },
+      {
+        "command": "focusedMarkdown.disable",
+        "title": "Disable Focused Markdown"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "focusedMarkdown.toggle",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m",
+        "when": "editorTextFocus && resourceLangId == markdown"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "echo 'No linter configured'",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.4.5",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "marked": "^12.0.2"
+  }
+}
+
+
