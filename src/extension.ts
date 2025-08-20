@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-let isEnabled = false;
+let isEnabled = true; // Enable by default
 const decorationTypes = new Map<string, vscode.TextEditorDecorationType>();
 
 export function activate(context: vscode.ExtensionContext) {
