@@ -28,8 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const onDidChangeTextDocument = vscode.workspace.onDidChangeTextDocument((event) => {
         if (isMarkdownFile(event.document)) {
-            // Check for Enter key after ordered list item
-            handleOrderedListAutoIncrement(event);
+            // Check for Enter key after list items
+            handleListAutoIncrement(event);
             updateEditorForDocument(event.document);
         }
     });
@@ -76,38 +76,81 @@ function initializeDecorationTypes() {
         textDecoration: 'none; font-size: 1.1em; line-height: 1.2'
     }));
 
-    decorationTypes.set('bold', vscode.window.createTextEditorDecorationType({
-        fontWeight: 'bold'
+    // Header symbol hiding
+    decorationTypes.set('h1Symbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0',
+        textDecoration: 'none; margin-left: -2ch; position: absolute'
     }));
 
-    decorationTypes.set('italic', vscode.window.createTextEditorDecorationType({
+    decorationTypes.set('h2Symbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0',
+        textDecoration: 'none; margin-left: -3ch; position: absolute'
+    }));
+
+    decorationTypes.set('h3Symbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0',
+        textDecoration: 'none; margin-left: -4ch; position: absolute'
+    }));
+
+    // Hide markdown symbols while styling content
+    decorationTypes.set('boldSymbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0.3',
+        color: 'rgba(127,127,127,0.3)'
+    }));
+
+    decorationTypes.set('boldContent', vscode.window.createTextEditorDecorationType({
+        fontWeight: 'bold',
+        color: new vscode.ThemeColor('editor.foreground')
+    }));
+
+    decorationTypes.set('italicSymbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0.3',
+        color: 'rgba(127,127,127,0.3)'
+    }));
+
+    decorationTypes.set('italicContent', vscode.window.createTextEditorDecorationType({
         fontStyle: 'italic'
     }));
 
-    decorationTypes.set('code', vscode.window.createTextEditorDecorationType({
+    decorationTypes.set('codeSymbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0.3',
+        color: 'rgba(127,127,127,0.3)'
+    }));
+
+    decorationTypes.set('codeContent', vscode.window.createTextEditorDecorationType({
         backgroundColor: new vscode.ThemeColor('textCodeBlock.background'),
         border: '1px solid rgba(127,127,127,0.3)',
         borderRadius: '3px'
     }));
 
-    decorationTypes.set('strikethrough', vscode.window.createTextEditorDecorationType({
+    decorationTypes.set('strikethroughSymbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0.3',
+        color: 'rgba(127,127,127,0.3)'
+    }));
+
+    decorationTypes.set('strikethroughContent', vscode.window.createTextEditorDecorationType({
         textDecoration: 'line-through'
+    }));
+
+    decorationTypes.set('bulletSymbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0.2',
+        color: 'rgba(127,127,127,0.2)'
     }));
 
     decorationTypes.set('bulletList', vscode.window.createTextEditorDecorationType({
         before: {
-            contentText: '• ',
+            contentText: '•',
             color: new vscode.ThemeColor('editor.foreground'),
             fontWeight: 'bold',
             margin: '0 0 0 16px'
         },
-        textDecoration: 'none; margin-left: 16px;'
+        textDecoration: 'none; margin-left: 8px;'
     }));
 
     decorationTypes.set('orderedList', vscode.window.createTextEditorDecorationType({
         color: new vscode.ThemeColor('editor.foreground'),
         fontWeight: '500',
-        textDecoration: 'none; margin-left: 10px; padding-left: 2px'
+        textDecoration: 'none; margin-left: 16px; padding-left: 0px'
     }));
 }
 
@@ -152,12 +195,11 @@ function updateEditor(editor: vscode.TextEditor) {
     }
 
     for (let i = 0; i < document.lineCount; i++) {
-        if (i === currentLine) continue;
-
         const line = document.lineAt(i);
         const text = line.text;
+        const isFocused = i === currentLine;
 
-        parseLineForDecorations(text, i, decorationsMap);
+        parseLineForDecorations(text, i, decorationsMap, isFocused);
     }
 
     for (const [type, decorationType] of decorationTypes) {
@@ -166,14 +208,29 @@ function updateEditor(editor: vscode.TextEditor) {
     }
 }
 
-function parseLineForDecorations(text: string, lineNumber: number, decorationsMap: Map<string, vscode.DecorationOptions[]>) {
+function parseLineForDecorations(text: string, lineNumber: number, decorationsMap: Map<string, vscode.DecorationOptions[]>, isFocused: boolean = false) {
     if (text.startsWith('# ')) {
+        // Hide the "# " when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'h1Symbols', lineNumber, 0, 2);
+        }
+        // Style the entire line
         addDecoration(decorationsMap, 'h1', lineNumber, 0, text.length);
         return;
     } else if (text.startsWith('## ')) {
+        // Hide the "## " when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'h2Symbols', lineNumber, 0, 3);
+        }
+        // Style the entire line
         addDecoration(decorationsMap, 'h2', lineNumber, 0, text.length);
         return;
     } else if (text.startsWith('### ')) {
+        // Hide the "### " when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'h3Symbols', lineNumber, 0, 4);
+        }
+        // Style the entire line
         addDecoration(decorationsMap, 'h3', lineNumber, 0, text.length);
         return;
     }
@@ -183,7 +240,10 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
         const match = text.match(/^(\s*)- (.*)$/);
         if (match) {
             const indent = match[1];
-            // Hide the "- " and replace with bullet
+            // Only hide symbols when not focused
+            if (!isFocused) {
+                addDecoration(decorationsMap, 'bulletSymbols', lineNumber, indent.length, indent.length + 2);
+            }
             addDecoration(decorationsMap, 'bulletList', lineNumber, indent.length, indent.length + 2);
         }
         return;
@@ -198,22 +258,46 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
     const boldRegex = /\*\*(.*?)\*\*/g;
     let match;
     while ((match = boldRegex.exec(text)) !== null) {
-        addDecoration(decorationsMap, 'bold', lineNumber, match.index, match.index + match[0].length);
+        // Only hide symbols when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'boldSymbols', lineNumber, match.index, match.index + 2);
+            addDecoration(decorationsMap, 'boldSymbols', lineNumber, match.index + match[0].length - 2, match.index + match[0].length);
+        }
+        // Always style the content
+        addDecoration(decorationsMap, 'boldContent', lineNumber, match.index + 2, match.index + 2 + match[1].length);
     }
 
     const italicRegex = /(?<!\*)\*([^*]+)\*(?!\*)/g;
     while ((match = italicRegex.exec(text)) !== null) {
-        addDecoration(decorationsMap, 'italic', lineNumber, match.index, match.index + match[0].length);
+        // Only hide symbols when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'italicSymbols', lineNumber, match.index, match.index + 1);
+            addDecoration(decorationsMap, 'italicSymbols', lineNumber, match.index + match[0].length - 1, match.index + match[0].length);
+        }
+        // Always style the content
+        addDecoration(decorationsMap, 'italicContent', lineNumber, match.index + 1, match.index + 1 + match[1].length);
     }
 
     const codeRegex = /`([^`]+)`/g;
     while ((match = codeRegex.exec(text)) !== null) {
-        addDecoration(decorationsMap, 'code', lineNumber, match.index, match.index + match[0].length);
+        // Only hide symbols when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'codeSymbols', lineNumber, match.index, match.index + 1);
+            addDecoration(decorationsMap, 'codeSymbols', lineNumber, match.index + match[0].length - 1, match.index + match[0].length);
+        }
+        // Always style the content
+        addDecoration(decorationsMap, 'codeContent', lineNumber, match.index + 1, match.index + 1 + match[1].length);
     }
 
     const strikethroughRegex = /~~(.*?)~~/g;
     while ((match = strikethroughRegex.exec(text)) !== null) {
-        addDecoration(decorationsMap, 'strikethrough', lineNumber, match.index, match.index + match[0].length);
+        // Only hide symbols when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'strikethroughSymbols', lineNumber, match.index, match.index + 2);
+            addDecoration(decorationsMap, 'strikethroughSymbols', lineNumber, match.index + match[0].length - 2, match.index + match[0].length);
+        }
+        // Always style the content
+        addDecoration(decorationsMap, 'strikethroughContent', lineNumber, match.index + 2, match.index + 2 + match[1].length);
     }
 }
 
@@ -232,7 +316,7 @@ function clearAllDecorations(editor: vscode.TextEditor) {
     }
 }
 
-function handleOrderedListAutoIncrement(event: vscode.TextDocumentChangeEvent) {
+function handleListAutoIncrement(event: vscode.TextDocumentChangeEvent) {
     const editor = vscode.window.activeTextEditor;
     if (!editor || editor.document !== event.document) return;
 
@@ -252,6 +336,20 @@ function handleOrderedListAutoIncrement(event: vscode.TextDocumentChangeEvent) {
                 const nextListItem = `${indent}${nextNumber}. `;
 
                 // Insert the next number on the new line
+                const nextLinePosition = new vscode.Position(position.line + 1, 0);
+                const edit = new vscode.WorkspaceEdit();
+                edit.insert(event.document.uri, nextLinePosition, nextListItem);
+                vscode.workspace.applyEdit(edit);
+                return;
+            }
+
+            // Check if current line is a bullet list item
+            const bulletListMatch = currentText.match(/^(\s*)- \s*/);
+            if (bulletListMatch) {
+                const indent = bulletListMatch[1];
+                const nextListItem = `${indent}- `;
+
+                // Insert the next bullet on the new line
                 const nextLinePosition = new vscode.Position(position.line + 1, 0);
                 const edit = new vscode.WorkspaceEdit();
                 edit.insert(event.document.uri, nextLinePosition, nextListItem);
