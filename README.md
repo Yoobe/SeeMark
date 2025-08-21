@@ -19,7 +19,7 @@ Now, as you type you can easily see your doc's hierarchy in `vscode` without hav
 - **Italic** (`*text*`) - Italic styling, hidden asterisks
 - **Code** (`` `text` ``) - Background styling, hidden backticks
 - **Strikethrough** (`~~text~~`) - Line-through, hidden tildes
-- **Links** (`[text](url)`) - Underlined text, hidden URL and brackets
+- **Links** (`[link](http://jonahgoldsaito.com)`) - Underlined text, hidden URL and brackets
 - **Lists** (`- item`, `1. item`) - Styled bullets/numbers, hidden markup
 
 ## 🎮 Usage
@@ -28,13 +28,13 @@ Now, as you type you can easily see your doc's hierarchy in `vscode` without hav
 2. **Start typing markdown** - see live rendering as you type
 3. **Click on any line** - see full markdown syntax for editing
 4. **Click away** - see clean rendered text
-5. **Use `Ctrl+Shift+M`** to toggle on/off
+5. **Use`Ctrl+Shift+M`** to toggle on/off
 
 ## 💡 Why Focused Markdown?
 
 Traditional markdown editors force you to choose:
 
-- **WYSIWYG editors** - lose access to raw markdown
+- **WYSIWYG editors** - lose access to raw markdown (and are you old enough to know that acronym?)
 - **Split preview** - takes up screen space
 - **Plain text** - hard to parse while writing
 
