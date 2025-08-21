@@ -1,13 +1,17 @@
-# Focused Markdown
+# SeeMark
 
-A revolutionary VS Code extension that provides live markdown rendering with clean, focused editing. Experience WYSIWYG-style markdown editing without losing the power of raw markdown syntax.
+So you end up writing Markdown.
+
+And likely you'll end up writing more, not just for humans, but to give your agents more context.
+
+I always wished it was easier to visually see my docs hierarchy without having to toggle into another preview mode. So that is this. Simple live rendering of the Markdown basics, with clean, focused editing.
 
 ## ✨ Features
 
 ### 🎯 **Focused Editing**
-- **Hide markdown syntax** when not editing a line
-- **Show full syntax** when cursor is on the line
-- **Perfect space collapse** - no gaps where symbols were
+- **Grok the visual hierarchy of a doc at a glance**
+- **Show full markdown syntax** when cursor is on the line
+- **Hide syntax** when not editing a line
 
 ### 🚀 **Live Rendering**
 - **Headers** (`# ## ###`) - Larger text, hidden symbols
@@ -18,16 +22,6 @@ A revolutionary VS Code extension that provides live markdown rendering with cle
 - **Links** (`[text](url)`) - Underlined text, hidden URL and brackets
 - **Lists** (`- item`, `1. item`) - Styled bullets/numbers, hidden markup
 
-### 🔄 **Smart Auto-Completion**
-- **Press Enter** after `1. item` → automatically creates `2. `
-- **Press Enter** after `- item` → automatically creates `- `
-- **Preserves indentation** for nested lists
-
-### ⚡ **Auto-Enabled**
-- **Automatically activates** when you open `.md` files
-- **Toggle on/off** with `Ctrl+Shift+M` (Cmd+Shift+M on Mac)
-- **Works everywhere** - headers, lists, and regular text
-
 ## 🎮 Usage
 
 1. **Open any `.md` file** - extension activates automatically
@@ -36,27 +30,12 @@ A revolutionary VS Code extension that provides live markdown rendering with cle
 4. **Click away** - see clean rendered text
 5. **Use `Ctrl+Shift+M`** to toggle on/off
 
-## ⌨️ Keyboard Shortcuts
-
-- `Ctrl+Shift+M` (Windows/Linux) / `Cmd+Shift+M` (Mac) - Toggle Focused Markdown
-
-## 🛠️ Commands
-
-- **Toggle Focused Markdown** - Enable/disable the extension
-- **Enable Focused Markdown** - Turn on rendering
-- **Disable Focused Markdown** - Turn off rendering
-
 ## 💡 Why Focused Markdown?
 
 Traditional markdown editors force you to choose:
 - **WYSIWYG editors** - lose access to raw markdown
 - **Split preview** - takes up screen space
-- **Plain text** - hard to read while writing
-
-**Focused Markdown solves this** by giving you both:
-- **Clean, readable text** when you're not editing
-- **Full markdown access** when you need to edit
-- **Native VS Code editor** with all your favorite features
+- **Plain text** - hard to parse while writing
 
 ## 📸 Examples
 
