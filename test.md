@@ -2,20 +2,17 @@
 
 so here's an extra line
 
-# Here's an H1!
+# Here's an **H1!**
 
-## Heading 2
+### Heading 2
 
-### Heading 3
-
-
-# This is **bold text** and this is *italic text*.
+# Heading 3
 
 Here's some `inline code` and ~~strikethrough~~.
 
-Regular text line with [link](http://google.com).
+Regular text line with [link](http://google.com). And yay!
 
-**Bold line** with more content.
+**Bold txt** with more content.
 
 *Italic line* with more **content.**
 
@@ -23,6 +20,11 @@ Regular text line with [link](http://google.com).
 2. uda things
 3. yes
 
-- the first
-- the second
+- the **first** item
+- the *second* item
 - the third
+- something
+- else
+
+ok
+

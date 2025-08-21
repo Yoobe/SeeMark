@@ -1,9 +1,11 @@
 {
-  "name": "focused-markdown",
-  "displayName": "Focused Markdown",
-  "description": "A custom editor that renders non-focused lines as Markdown and turns the focused line into editable text.",
-  "version": "0.0.6",
-  "publisher": "your-name",
+  "name": "see-mark",
+  "displayName": "SeeMark",
+  "description": "Live markdown rendering for the basics that makes a Markdown way easier to visually parse as you work on it. Hides syntax when not editing, shows full markdown when focused.",
+  "version": "0.1.0",
+  "publisher": "jonahgoldsaito",
+  "icon": "icon.png",
+  "keywords": ["markdown", "preview", "wysiwyg", "editing", "live"],
   "repository": {
     "type": "git",
     "url": "https://github.com/jonahgoldsaito/MarkGetsDown.git"
@@ -16,7 +18,8 @@
     "vscode": "^1.90.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Formatters"
   ],
   "activationEvents": [
     "onLanguage:markdown"
@@ -25,24 +28,16 @@
   "contributes": {
     "commands": [
       {
-        "command": "focusedMarkdown.toggle",
-        "title": "Toggle Focused Markdown"
+        "command": "SeeMark.toggle",
+        "title": "Toggle SeeMark"
       },
       {
-        "command": "focusedMarkdown.enable",
-        "title": "Enable Focused Markdown"
+        "command": "SeeMark.enable",
+        "title": "Enable SeeMark"
       },
       {
         "command": "focusedMarkdown.disable",
-        "title": "Disable Focused Markdown"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "focusedMarkdown.toggle",
-        "key": "ctrl+shift+m",
-        "mac": "cmd+shift+m",
-        "when": "editorTextFocus && resourceLangId == markdown"
+        "title": "Disable SeeMark"
       }
     ]
   },

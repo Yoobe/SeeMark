@@ -94,8 +94,8 @@ function initializeDecorationTypes() {
 
     // Hide markdown symbols while styling content
     decorationTypes.set('boldSymbols', vscode.window.createTextEditorDecorationType({
-        opacity: '0.3',
-        color: 'rgba(127,127,127,0.3)'
+        opacity: '0',
+        textDecoration: 'none; font-size: 0; width: 0; position: absolute; overflow: hidden'
     }));
 
     decorationTypes.set('boldContent', vscode.window.createTextEditorDecorationType({
@@ -104,8 +104,8 @@ function initializeDecorationTypes() {
     }));
 
     decorationTypes.set('italicSymbols', vscode.window.createTextEditorDecorationType({
-        opacity: '0.3',
-        color: 'rgba(127,127,127,0.3)'
+        opacity: '0',
+        textDecoration: 'none; font-size: 0; width: 0; position: absolute; overflow: hidden'
     }));
 
     decorationTypes.set('italicContent', vscode.window.createTextEditorDecorationType({
@@ -113,8 +113,8 @@ function initializeDecorationTypes() {
     }));
 
     decorationTypes.set('codeSymbols', vscode.window.createTextEditorDecorationType({
-        opacity: '0.3',
-        color: 'rgba(127,127,127,0.3)'
+        opacity: '0',
+        textDecoration: 'none; font-size: 0; width: 0; position: absolute; overflow: hidden'
     }));
 
     decorationTypes.set('codeContent', vscode.window.createTextEditorDecorationType({
@@ -124,8 +124,8 @@ function initializeDecorationTypes() {
     }));
 
     decorationTypes.set('strikethroughSymbols', vscode.window.createTextEditorDecorationType({
-        opacity: '0.3',
-        color: 'rgba(127,127,127,0.3)'
+        opacity: '0',
+        textDecoration: 'none; font-size: 0; width: 0; position: absolute; overflow: hidden'
     }));
 
     decorationTypes.set('strikethroughContent', vscode.window.createTextEditorDecorationType({
@@ -138,8 +138,8 @@ function initializeDecorationTypes() {
     }));
 
     decorationTypes.set('linkSymbols', vscode.window.createTextEditorDecorationType({
-        opacity: '0.3',
-        color: 'rgba(127,127,127,0.3)'
+        opacity: '0',
+        textDecoration: 'none; font-size: 0; width: 0; position: absolute; overflow: hidden'
     }));
 
     decorationTypes.set('linkContent', vscode.window.createTextEditorDecorationType({
@@ -256,13 +256,13 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
             }
             addDecoration(decorationsMap, 'bulletList', lineNumber, indent.length, indent.length + 2);
         }
-        return;
+        // Don't return - continue processing inline formatting
     }
 
     // Handle ordered lists (1. item, 2. item, etc.)
     if (text.match(/^(\s*)\d+\.\s/)) {
         addDecoration(decorationsMap, 'orderedList', lineNumber, 0, text.length);
-        return;
+        // Don't return - continue processing inline formatting
     }
 
     const boldRegex = /\*\*(.*?)\*\*/g;
@@ -315,13 +315,13 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
         const linkText = match[1];
         const linkUrl = match[2];
         
-        // Only hide symbols when not focused
+        // Only hide symbols and URL when not focused
         if (!isFocused) {
-            // Hide the [ ] ( ) symbols
+            // Hide the [ ] symbols
             addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index, match.index + 1); // [
             addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + 1 + linkText.length, match.index + 1 + linkText.length + 1); // ]
-            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + 1 + linkText.length + 1, match.index + 1 + linkText.length + 2); // (
-            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + match[0].length - 1, match.index + match[0].length); // )
+            // Hide the entire URL part including ( )
+            addDecoration(decorationsMap, 'linkSymbols', lineNumber, match.index + 1 + linkText.length + 1, match.index + match[0].length);
         }
         // Always style the link text
         addDecoration(decorationsMap, 'linkContent', lineNumber, match.index + 1, match.index + 1 + linkText.length);
