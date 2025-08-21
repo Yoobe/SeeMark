@@ -1,3 +1,5 @@
+![SeeMark logo](icon.png)
+
 # SeeMark
 
 Seems like we'll all end up writing more `Markdown`, because it's a great format for giving all collaborators more context about your work... human, or not-so-human [insert agent of choice].
