@@ -1,19 +1,19 @@
 # SeeMark
 
-So you end up writing Markdown.
+Seems like we'll all end up writing more `Markdown`, because it's a great format for giving all collaborators more context about your work... human, or not-so-human [insert agent of choice].
 
-And likely you'll end up writing more, not just for humans, but to give your agents more context.
-
-I always wished it was easier to visually see my docs hierarchy without having to toggle into another preview mode. So that is this. Simple live rendering of the Markdown basics, with clean, focused editing.
+Now, as you type you can easily see your doc's hierarchy in `vscode` without having to toggle into a preview mode or have one side by side. So this is that... simple live rendering of the Markdown basics, for quick, clean, focused editing.
 
 ## ✨ Features
 
 ### 🎯 **Focused Editing**
+
 - **Grok the visual hierarchy of a doc at a glance**
 - **Show full markdown syntax** when cursor is on the line
 - **Hide syntax** when not editing a line
 
 ### 🚀 **Live Rendering**
+
 - **Headers** (`# ## ###`) - Larger text, hidden symbols
 - **Bold** (`**text**`) - Bold styling, hidden asterisks
 - **Italic** (`*text*`) - Italic styling, hidden asterisks
@@ -33,6 +33,7 @@ I always wished it was easier to visually see my docs hierarchy without having t
 ## 💡 Why Focused Markdown?
 
 Traditional markdown editors force you to choose:
+
 - **WYSIWYG editors** - lose access to raw markdown
 - **Split preview** - takes up screen space
 - **Plain text** - hard to parse while writing
@@ -52,14 +53,10 @@ Traditional markdown editors force you to choose:
 
 - VS Code 1.90.0 or higher
 
-## 📝 License
-
-MIT License - see LICENSE file for details
-
 ## 🐛 Issues & Feedback
 
 Found a bug or have a suggestion? [Open an issue](https://github.com/jonahgoldsaito/MarkGetsDown/issues)
 
 ---
 
-**Enjoy clean, focused markdown editing!** 🎉
+### Go get writing
