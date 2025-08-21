@@ -6,18 +6,18 @@ const decorationTypes = new Map<string, vscode.TextEditorDecorationType>();
 export function activate(context: vscode.ExtensionContext) {
     initializeDecorationTypes();
 
-    const toggleCommand = vscode.commands.registerCommand('focusedMarkdown.toggle', () => {
+    const toggleCommand = vscode.commands.registerCommand('SeeMark.toggle', () => {
         isEnabled = !isEnabled;
-        vscode.window.showInformationMessage(`Focused Markdown ${isEnabled ? 'enabled' : 'disabled'}`);
+        vscode.window.showInformationMessage(`SeeMark ${isEnabled ? 'enabled' : 'disabled'}`);
         updateAllEditors();
     });
 
-    const enableCommand = vscode.commands.registerCommand('focusedMarkdown.enable', () => {
+    const enableCommand = vscode.commands.registerCommand('SeeMark.enable', () => {
         isEnabled = true;
         updateAllEditors();
     });
 
-    const disableCommand = vscode.commands.registerCommand('focusedMarkdown.disable', () => {
+    const disableCommand = vscode.commands.registerCommand('SeeMark.disable', () => {
         isEnabled = false;
         updateAllEditors();
     });

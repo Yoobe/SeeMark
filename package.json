@@ -36,7 +36,7 @@
         "title": "Enable SeeMark"
       },
       {
-        "command": "focusedMarkdown.disable",
+        "command": "SeeMark.disable",
         "title": "Disable SeeMark"
       }
     ]
