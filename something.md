@@ -4,25 +4,20 @@
 
 ### h3
 
-#### h4
-     h4
+*italic things* are ok
+**and bold things** are too
 
-
-     * something * ok
-
-# whatever
+and surprise, `code spans` work!
 
 the thing is
 
-- I think that it's cool
-
-- ok
 1. dude
 2. ok dude
-
-1. things
-2. other things
-3. ANOTHER thing
+3. yup
 
 - something
 - unordered
+  - and an indented list
+  - anoter item
+    - 3rd level!
+    - Ad infinitum!
