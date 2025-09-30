@@ -147,21 +147,6 @@ function initializeDecorationTypes() {
         textDecoration: 'underline'
     }));
 
-    decorationTypes.set('bulletList', vscode.window.createTextEditorDecorationType({
-        before: {
-            contentText: '•',
-            color: new vscode.ThemeColor('editor.foreground'),
-            fontWeight: 'bold',
-            margin: '0 0 0 16px'
-        },
-        textDecoration: 'none; margin-left: 8px;'
-    }));
-
-    decorationTypes.set('orderedList', vscode.window.createTextEditorDecorationType({
-        color: new vscode.ThemeColor('editor.foreground'),
-        fontWeight: '500',
-        textDecoration: 'none; margin-left: 16px; padding-left: 0px'
-    }));
 }
 
 function isMarkdownFile(document: vscode.TextDocument): boolean {
@@ -246,22 +231,52 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
     }
 
     // Handle bullet lists (- item)
-    if (text.match(/^(\s*)- /)) {
-        const match = text.match(/^(\s*)- (.*)$/);
-        if (match) {
-            const indent = match[1];
-            // Only hide symbols when not focused
-            if (!isFocused) {
-                addDecoration(decorationsMap, 'bulletSymbols', lineNumber, indent.length, indent.length + 2);
-            }
-            addDecoration(decorationsMap, 'bulletList', lineNumber, indent.length, indent.length + 2);
+    const bulletMatch = text.match(/^(\s*)- /);
+    if (bulletMatch) {
+        const indent = bulletMatch[1];
+        const indentLevel = Math.floor(indent.length / 2); // 2 spaces = 1 level
+        const leftMargin = 16 + (indentLevel * 16); // Base margin + nested levels
+
+        // Create or get decoration type for this indent level
+        const bulletKey = `bulletList-${indentLevel}`;
+        if (!decorationTypes.has(bulletKey)) {
+            decorationTypes.set(bulletKey, vscode.window.createTextEditorDecorationType({
+                before: {
+                    contentText: '•',
+                    color: new vscode.ThemeColor('editor.foreground'),
+                    fontWeight: 'bold',
+                    margin: `0 0 0 ${leftMargin}px`
+                },
+                textDecoration: 'none; margin-left: 8px;'
+            }));
         }
+
+        // Only hide symbols when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'bulletSymbols', lineNumber, indent.length, indent.length + 2);
+        }
+        addDecorationWithType(decorationsMap, bulletKey, lineNumber, indent.length, indent.length + 2);
         // Don't return - continue processing inline formatting
     }
 
     // Handle ordered lists (1. item, 2. item, etc.)
-    if (text.match(/^(\s*)\d+\.\s/)) {
-        addDecoration(decorationsMap, 'orderedList', lineNumber, 0, text.length);
+    const orderedMatch = text.match(/^(\s*)(\d+)\.\s/);
+    if (orderedMatch) {
+        const indent = orderedMatch[1];
+        const indentLevel = Math.floor(indent.length / 2); // 2 spaces = 1 level
+        const leftMargin = 16 + (indentLevel * 16); // Base margin + nested levels
+
+        // Create or get decoration type for this indent level
+        const orderedKey = `orderedList-${indentLevel}`;
+        if (!decorationTypes.has(orderedKey)) {
+            decorationTypes.set(orderedKey, vscode.window.createTextEditorDecorationType({
+                color: new vscode.ThemeColor('editor.foreground'),
+                fontWeight: '500',
+                textDecoration: `none; margin-left: ${leftMargin}px; padding-left: 0px`
+            }));
+        }
+
+        addDecorationWithType(decorationsMap, orderedKey, lineNumber, 0, text.length);
         // Don't return - continue processing inline formatting
     }
 
@@ -329,6 +344,18 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
 }
 
 function addDecoration(decorationsMap: Map<string, vscode.DecorationOptions[]>, type: string, line: number, start: number, end: number) {
+    const decorations = decorationsMap.get(type);
+    if (decorations) {
+        decorations.push({
+            range: new vscode.Range(line, start, line, end)
+        });
+    }
+}
+
+function addDecorationWithType(decorationsMap: Map<string, vscode.DecorationOptions[]>, type: string, line: number, start: number, end: number) {
+    if (!decorationsMap.has(type)) {
+        decorationsMap.set(type, []);
+    }
     const decorations = decorationsMap.get(type);
     if (decorations) {
         decorations.push({
