@@ -1,25 +1,43 @@
 import * as vscode from 'vscode';
+import { registerSpacer, SpacerCodeLensProvider } from './spacerCodeLens';
+
+// A line whose sole content is exactly "---" (optional surrounding whitespace)
+// is a thematic break. Pipe-delimited / colon table separators contain | or :
+// so they never match. Per decision D1 the extension is line-based and not
+// block-aware: YAML front-matter and bare single-column separators also match
+// and render as rules by design (focus-reveal is the escape hatch). `\s` also
+// matches `\r`, but document.lineAt().text is EOL-stripped by VSCode so a CRLF
+// file is safe.
+// NOTE: an identical copy lives in spacerCodeLens.ts (deliberately not shared
+// to avoid a cross-file import for one regex); any change to detection must
+// update BOTH files in lockstep.
+const HR_RULE_RE = /^\s*---\s*$/;
 
 let isEnabled = true; // Enable by default
 const decorationTypes = new Map<string, vscode.TextEditorDecorationType>();
+let spacer: SpacerCodeLensProvider | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
     initializeDecorationTypes();
+    spacer = registerSpacer(context, () => isEnabled);
 
     const toggleCommand = vscode.commands.registerCommand('SeeMark.toggle', () => {
         isEnabled = !isEnabled;
         vscode.window.showInformationMessage(`SeeMark ${isEnabled ? 'enabled' : 'disabled'}`);
         updateAllEditors();
+        spacer?.refresh();
     });
 
     const enableCommand = vscode.commands.registerCommand('SeeMark.enable', () => {
         isEnabled = true;
         updateAllEditors();
+        spacer?.refresh();
     });
 
     const disableCommand = vscode.commands.registerCommand('SeeMark.disable', () => {
         isEnabled = false;
         updateAllEditors();
+        spacer?.refresh();
     });
 
     const onDidChangeActiveTextEditor = vscode.window.onDidChangeActiveTextEditor(() => {
@@ -157,10 +175,34 @@ function initializeDecorationTypes() {
         textDecoration: 'none; margin-left: 8px;'
     }));
 
+    // Original look, split exactly like the (bug-free) bullet path: whole-line
+    // color/weight is safe (inherited text props, not box-model), but the
+    // 16px indent must NOT span the whole line — VS Code re-injects a
+    // whole-line margin at the word-wrap/render-chunk boundary (~char 50).
     decorationTypes.set('orderedList', vscode.window.createTextEditorDecorationType({
         color: new vscode.ThemeColor('editor.foreground'),
         fontWeight: '500',
-        textDecoration: 'none; margin-left: 16px; padding-left: 0px'
+        textDecoration: 'none; padding-left: 0px'
+    }));
+
+    // Indent carried only on the short marker range — mirrors how bulletList
+    // applies its `margin-left` to the 2-char "- " marker (never the whole
+    // line), which is why bullets have no ~char-50 artifact.
+    decorationTypes.set('orderedListIndent', vscode.window.createTextEditorDecorationType({
+        textDecoration: 'none; margin-left: 16px'
+    }));
+
+    // Horizontal rule for a standalone "---" line. A single decoration over the
+    // line's text: the dash glyphs are made transparent (the box is kept, so
+    // there is something to draw the border on — a separate zero-box hide
+    // decoration would collapse the box the rule needs) and a stretched
+    // bottom border is drawn via the project's established raw-injection hack
+    // (horizontal/visual CSS, which the decoration layout honors). Width is a
+    // fixed ~60ch divider; the exact width/color is ratified at WU3.
+    decorationTypes.set('hrRule', vscode.window.createTextEditorDecorationType({
+        color: 'transparent',
+        textDecoration: 'none; display: inline-block; width: 60ch; ' +
+            'border-bottom: 1px solid var(--vscode-panel-border, rgba(127,127,127,0.4));'
     }));
 }
 
@@ -245,6 +287,18 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
         return;
     }
 
+    // Horizontal rule: a line that is exactly "---" (optional surrounding
+    // whitespace). Checked here, with the heading branches and before any
+    // bullet/inline pass, and returns early so no other decoration touches a
+    // rule line. When the line is focused, nothing is added so the raw "---"
+    // is revealed (mirrors how headings reveal "# ").
+    if (HR_RULE_RE.test(text)) {
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'hrRule', lineNumber, 0, text.length);
+        }
+        return;
+    }
+
     // Handle bullet lists (- item)
     if (text.match(/^(\s*)- /)) {
         const match = text.match(/^(\s*)- (.*)$/);
@@ -260,8 +314,14 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
     }
 
     // Handle ordered lists (1. item, 2. item, etc.)
-    if (text.match(/^(\s*)\d+\.\s/)) {
+    const orderedMatch = text.match(/^(\s*)(\d+\.\s)/);
+    if (orderedMatch) {
+        const markerStart = orderedMatch[1].length;
+        const markerEnd = markerStart + orderedMatch[2].length;
+        // Whole-line color/weight (original look, safe). Indent ONLY on the
+        // marker range so the margin isn't re-injected at ~char 50.
         addDecoration(decorationsMap, 'orderedList', lineNumber, 0, text.length);
+        addDecoration(decorationsMap, 'orderedListIndent', lineNumber, markerStart, markerEnd);
         // Don't return - continue processing inline formatting
     }
 

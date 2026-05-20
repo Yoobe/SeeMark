@@ -46,7 +46,9 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "echo 'No linter configured'",
-    "package": "vsce package"
+    "package": "vsce package --out see-mark.vsix",
+    "install-local": "code --install-extension see-mark.vsix --force",
+    "deploy": "npm run package && npm run install-local"
   },
   "devDependencies": {
     "@types/vscode": "^1.90.0",
