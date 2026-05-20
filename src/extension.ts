@@ -71,26 +71,35 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function initializeDecorationTypes() {
+
+    const headerColor = '#ffa280';
+
     decorationTypes.set('h1', vscode.window.createTextEditorDecorationType({
         fontWeight: 'bold',
-        color: new vscode.ThemeColor('editor.foreground'),
+        color: headerColor,
         before: {
             contentText: '',
             fontWeight: 'bold',
-            color: new vscode.ThemeColor('editor.foreground')
+            color: headerColor
         },
-        textDecoration: 'none; font-size: 1.5em; line-height: 1.2'
+        textDecoration: 'none; font-size: 1.75em; line-height: 1.2'
     }));
 
     decorationTypes.set('h2', vscode.window.createTextEditorDecorationType({
         fontWeight: 'bold',
-        color: new vscode.ThemeColor('editor.foreground'),
-        textDecoration: 'none; font-size: 1.3em; line-height: 1.2'
+        color: headerColor,
+        textDecoration: 'none; font-size: 1.5em; line-height: 1.2'
     }));
 
     decorationTypes.set('h3', vscode.window.createTextEditorDecorationType({
         fontWeight: 'bold',
-        color: new vscode.ThemeColor('editor.foreground'),
+        color: headerColor,
+        textDecoration: 'none; font-size: 1.25em; line-height: 1.2'
+    }));
+
+    decorationTypes.set('h4', vscode.window.createTextEditorDecorationType({
+        fontWeight: 'bold',
+        color: headerColor,
         textDecoration: 'none; font-size: 1.1em; line-height: 1.2'
     }));
 
@@ -108,6 +117,11 @@ function initializeDecorationTypes() {
     decorationTypes.set('h3Symbols', vscode.window.createTextEditorDecorationType({
         opacity: '0',
         textDecoration: 'none; margin-left: -4ch; position: absolute'
+    }));
+
+    decorationTypes.set('h4Symbols', vscode.window.createTextEditorDecorationType({
+        opacity: '0',
+        textDecoration: 'none; margin-left: -5ch; position: absolute'
     }));
 
     // Hide markdown symbols while styling content
@@ -284,6 +298,14 @@ function parseLineForDecorations(text: string, lineNumber: number, decorationsMa
         }
         // Style the entire line
         addDecoration(decorationsMap, 'h3', lineNumber, 0, text.length);
+        return;
+    } else if (text.startsWith('#### ')) {
+        // Hide the "#### " when not focused
+        if (!isFocused) {
+            addDecoration(decorationsMap, 'h4Symbols', lineNumber, 0, 5);
+        }
+        // Style the entire line
+        addDecoration(decorationsMap, 'h4', lineNumber, 0, text.length);
         return;
     }
 
