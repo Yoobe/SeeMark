@@ -1,4 +1,4 @@
-![SeeMark logo](icon.png)
+![SeeMark logo](./icon.png)
 
 # SeeMark
 
@@ -44,11 +44,24 @@ Traditional markdown editors force you to choose:
 
 ```markdown
 # This becomes a large heading (when not focused)
+
 **This becomes bold text** with perfect spacing
+
 *This becomes italic* and flows naturally
+
 [This becomes a link](url) without the URL cluttering
+
+And you want a list?
+
+Here you go:
+
 - This becomes a bullet point
+- And another one
+
 1. This becomes a numbered item (auto-increments!)
+2. See!?
+3. I told you.
+
 ```
 
 ## 🔧 Requirements
