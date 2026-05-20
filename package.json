@@ -2,7 +2,7 @@
   "name": "see-mark",
   "displayName": "SeeMark",
   "description": "Live markdown rendering for the basics that makes a Markdown way easier to visually parse as you work on it. Hides syntax when not editing, shows full markdown when focused.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "jonahgoldsaito",
   "icon": "icon.png",
   "keywords": ["markdown", "preview", "wysiwyg", "editing", "live"],
