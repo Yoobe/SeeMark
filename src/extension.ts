@@ -82,25 +82,25 @@ function initializeDecorationTypes() {
             fontWeight: 'bold',
             color: headerColor
         },
-        textDecoration: 'none; font-size: 1.75em; line-height: 1.2'
+        textDecoration: 'none; font-size: 2.25em; line-height: 1.3'
     }));
 
     decorationTypes.set('h2', vscode.window.createTextEditorDecorationType({
         fontWeight: 'bold',
         color: headerColor,
-        textDecoration: 'none; font-size: 1.5em; line-height: 1.2'
+        textDecoration: 'none; font-size: 1.75em; line-height: 1.2'
     }));
 
     decorationTypes.set('h3', vscode.window.createTextEditorDecorationType({
         fontWeight: 'bold',
         color: headerColor,
-        textDecoration: 'none; font-size: 1.25em; line-height: 1.2'
+        textDecoration: 'none; font-size: 1.5em; line-height: 1.2'
     }));
 
     decorationTypes.set('h4', vscode.window.createTextEditorDecorationType({
         fontWeight: 'bold',
         color: headerColor,
-        textDecoration: 'none; font-size: 1.1em; line-height: 1.2'
+        textDecoration: 'none; font-size: 1.25em; line-height: 1.2'
     }));
 
     // Header symbol hiding
