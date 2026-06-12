@@ -26,21 +26,57 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "SeeMark.toggle",
-        "title": "Toggle SeeMark"
+  "commands": [
+    { "command": "SeeMark.toggle", "title": "Toggle SeeMark" },
+    { "command": "SeeMark.enable", "title": "Enable SeeMark" },
+    { "command": "SeeMark.disable", "title": "Disable SeeMark" }
+  ],
+  "configuration": {
+    "title": "SeeMark",
+    "properties": {
+      "seeMark.headerColor": {
+        "type": "string",
+        "default": "#8b949e",
+        "description": "Heading color for rendered markdown headings."
       },
-      {
-        "command": "SeeMark.enable",
-        "title": "Enable SeeMark"
+      "seeMark.h1Scale": {
+        "type": "number",
+        "default": 1.8,
+        "description": "Font scale for H1."
       },
-      {
-        "command": "SeeMark.disable",
-        "title": "Disable SeeMark"
+      "seeMark.h2Scale": {
+        "type": "number",
+        "default": 1.45,
+        "description": "Font scale for H2."
+      },
+      "seeMark.h3Scale": {
+        "type": "number",
+        "default": 1.2,
+        "description": "Font scale for H3."
+      },
+      "seeMark.inlineCodeBorderRadius": {
+        "type": "string",
+        "default": "5px",
+        "description": "Border radius for inline code."
+      },
+      "seeMark.inlineCodeBorderColor": {
+        "type": "string",
+        "default": "rgba(127,127,127,0.22)",
+        "description": "Border color for inline code."
+      },
+      "seeMark.bulletMarker": {
+        "type": "string",
+        "default": "•",
+        "description": "Marker used for bullet lists."
+      },
+      "seeMark.hideMarkdownSyntax": {
+        "type": "boolean",
+        "default": true,
+        "description": "Hide markdown syntax when a line is not focused."
       }
-    ]
-  },
+    }
+  }
+}
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
