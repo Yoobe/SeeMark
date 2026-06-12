@@ -1,18 +1,18 @@
 {
-  "name": "see-mark",
-  "displayName": "SeeMark",
-  "description": "Live markdown rendering for the basics that makes a Markdown way easier to visually parse as you work on it. Hides syntax when not editing, shows full markdown when focused.",
-  "version": "0.2.0",
-  "publisher": "jonahgoldsaito",
+  "name": "see-mark-yoobe",
+  "displayName": "SeeMark Yoobe",
+  "description": "Live markdown rendering for the basics that makes Markdown easier to visually parse while editing.",
+  "version": "0.3.0",
+  "publisher": "yoobe",
   "icon": "icon.png",
-  "keywords": ["markdown", "preview", "wysiwyg", "editing", "live"],
+  "keywords": ["markdown", "wysiwyg", "editing", "live", "decorations"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jonahgoldsaito/MarkGetsDown.git"
+    "url": "https://github.com/Yoobe/SeeMark.git"
   },
-  "homepage": "https://github.com/jonahgoldsaito/MarkGetsDown",
+  "homepage": "https://github.com/Yoobe/SeeMark",
   "bugs": {
-    "url": "https://github.com/jonahgoldsaito/MarkGetsDown/issues"
+    "url": "https://github.com/Yoobe/SeeMark/issues"
   },
   "engines": {
     "vscode": "^1.90.0"
@@ -26,64 +26,103 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-  "commands": [
-    { "command": "SeeMark.toggle", "title": "Toggle SeeMark" },
-    { "command": "SeeMark.enable", "title": "Enable SeeMark" },
-    { "command": "SeeMark.disable", "title": "Disable SeeMark" }
-  ],
-  "configuration": {
-    "title": "SeeMark",
-    "properties": {
-      "seeMark.headerColor": {
-        "type": "string",
-        "default": "#8b949e",
-        "description": "Heading color for rendered markdown headings."
+    "commands": [
+      {
+        "command": "SeeMark.toggle",
+        "title": "Toggle SeeMark"
       },
-      "seeMark.h1Scale": {
-        "type": "number",
-        "default": 1.8,
-        "description": "Font scale for H1."
+      {
+        "command": "SeeMark.enable",
+        "title": "Enable SeeMark"
       },
-      "seeMark.h2Scale": {
-        "type": "number",
-        "default": 1.45,
-        "description": "Font scale for H2."
-      },
-      "seeMark.h3Scale": {
-        "type": "number",
-        "default": 1.2,
-        "description": "Font scale for H3."
-      },
-      "seeMark.inlineCodeBorderRadius": {
-        "type": "string",
-        "default": "5px",
-        "description": "Border radius for inline code."
-      },
-      "seeMark.inlineCodeBorderColor": {
-        "type": "string",
-        "default": "rgba(127,127,127,0.22)",
-        "description": "Border color for inline code."
-      },
-      "seeMark.bulletMarker": {
-        "type": "string",
-        "default": "•",
-        "description": "Marker used for bullet lists."
-      },
-      "seeMark.hideMarkdownSyntax": {
-        "type": "boolean",
-        "default": true,
-        "description": "Hide markdown syntax when a line is not focused."
+      {
+        "command": "SeeMark.disable",
+        "title": "Disable SeeMark"
+      }
+    ],
+    "configuration": {
+      "title": "SeeMark",
+      "properties": {
+        "seeMark.headerColor": {
+          "type": "string",
+          "default": "#a0a8b3",
+          "description": "Heading color for rendered markdown headings."
+        },
+        "seeMark.h1Scale": {
+          "type": "number",
+          "default": 1.7,
+          "description": "Font scale for H1."
+        },
+        "seeMark.h2Scale": {
+          "type": "number",
+          "default": 1.4,
+          "description": "Font scale for H2."
+        },
+        "seeMark.h3Scale": {
+          "type": "number",
+          "default": 1.18,
+          "description": "Font scale for H3."
+        },
+        "seeMark.h4Scale": {
+          "type": "number",
+          "default": 1.05,
+          "description": "Font scale for H4."
+        },
+        "seeMark.inlineCodeBorderRadius": {
+          "type": "string",
+          "default": "5px",
+          "description": "Border radius for inline code."
+        },
+        "seeMark.inlineCodeBorderColor": {
+          "type": "string",
+          "default": "rgba(127,127,127,0.22)",
+          "description": "Border color for inline code."
+        },
+        "seeMark.inlineCodeUseThemeBackground": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use VS Code theme background for inline code."
+        },
+        "seeMark.inlineCodeBackground": {
+          "type": "string",
+          "default": "rgba(127,127,127,0.12)",
+          "description": "Fallback inline code background when theme background is disabled."
+        },
+        "seeMark.bulletMarker": {
+          "type": "string",
+          "default": "•",
+          "description": "Marker used for bullet lists."
+        },
+        "seeMark.orderedListFontWeight": {
+          "type": "string",
+          "default": "500",
+          "description": "Font weight for ordered list lines."
+        },
+        "seeMark.horizontalRuleWidth": {
+          "type": "string",
+          "default": "60ch",
+          "description": "Width of rendered horizontal rules."
+        },
+        "seeMark.hideMarkdownSyntax": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide markdown syntax when a line is not focused."
+        },
+        "seeMark.dimHiddenSyntax": {
+          "type": "boolean",
+          "default": true,
+          "description": "Dim list syntax instead of fully hiding some markers."
+        }
       }
     }
-  }
-}
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "echo 'No linter configured'",
-    "package": "vsce package --out see-mark.vsix",
-    "install-local": "code --install-extension see-mark.vsix --force",
+    "package": "vsce package --out see-mark-yoobe.vsix",
+    "install-local": "code --install-extension see-mark-yoobe.vsix --force",
     "deploy": "npm run package && npm run install-local"
   },
   "devDependencies": {
@@ -95,5 +134,3 @@
     "marked": "^12.0.2"
   }
 }
-
-
